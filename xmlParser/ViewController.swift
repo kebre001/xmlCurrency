@@ -33,17 +33,17 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     
     var currencyDict: [String : Double] = [:]
     
-    var dbCurrency: [Currency] = []
-    var dbTime: [Updated] = []
+    var dbCurrency: [Forex]! = []
+    var dbTime: [Updated]! = []
     
     var fromRateValue: Double = 0
     var toRateValue: Double = 0
     
-    var managedContext: NSManagedObjectContext!
+    //var managedContext: NSManagedObjectContext!
     
     var coreDataStack: CoreDataStack!
     
-    var currentCurrency: Currency!
+    var currentCurrency: Forex!
     
     //SVariabler
     
@@ -60,9 +60,9 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         
         //Skapar ett objekt av XML och kör initieringen som laddar ner all data
         xmlData = CurrencyXml()
-        xmlData.initXml()
+        xmlData.initXml(coreDataStack)
         
-        currencyDict = xmlData.cleanXml
+        //currencyDict = xmlData.cleanXml
         
         //Write out the date the xmldata is from
         labelHello.text = xmlData.xmlDate
@@ -72,40 +72,32 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             currencyA.append(currency)
         }
         
+        //xmlData.importXMLData(coreDataStack, data: currencyA)
+        
         //Test kod
-        let currencyEntity = NSEntityDescription.entityForName("Currency",
-            inManagedObjectContext: managedContext)
         
-        let currency = Currency(entity: currencyEntity!,
-            insertIntoManagedObjectContext: managedContext)
-        
-        let currencyName = "SEK"
-        let currencyFetch = NSFetchRequest(entityName: "Currency")
-        currencyFetch.predicate = NSPredicate(format: "country == %@", currencyName)
-        
+        /*let currencyFetch = NSFetchRequest(entityName: "Forex")
         var error: NSError?
-        
-        let result = managedContext.executeFetchRequest(currencyFetch,
-            error: &error) as [Currency]?
+        let result = coreDataStack.context.executeFetchRequest(currencyFetch, error: &error) as [Currency]?
         
         if let currencies = result {
             
+            println("Nr of entries: \(currencies.count)")
+            
             if currencies.count == 0 {
                 
-                currentCurrency = Currency(entity: currencyEntity!,
-                    insertIntoManagedObjectContext: managedContext)
-                currentCurrency.country = currencyName
+                //xmlData.importXMLData(coreDataStack, data: currencyA)
                 
-                if !managedContext.save(&error) {
-                    println("Could not save: \(error)")
-                }
             } else {
                 currentCurrency = currencies[0]
+                println("Currency: \(currencies)")
             }
             
         } else {
+            
             println("Could not fetch: \(error)")
-        }
+            
+        }*/
     
     }
     
@@ -157,7 +149,5 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             super.didReceiveMemoryWarning()
             // Dispose of any resources that can be recreated.
     }
-
-
 }
 
